@@ -294,10 +294,17 @@ function getSorted(rows) {
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const months = ['Jan.','Feb.','March','April','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.'];
-  let d = new Date(dateStr);
-  if (isNaN(d.getTime())) {
+  let d;
+  const iso = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    d = new Date(+iso[1], +iso[2] - 1, +iso[3]);
+  } else {
     const m = dateStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-    if (m) d = new Date(+m[3] < 100 ? 2000 + +m[3] : +m[3], +m[1] - 1, +m[2]);
+    if (m) {
+      d = new Date(+m[3] < 100 ? 2000 + +m[3] : +m[3], +m[1] - 1, +m[2]);
+    } else {
+      d = new Date(dateStr);
+    }
   }
   if (isNaN(d.getTime())) return dateStr;
   return months[d.getMonth()] + ' ' + d.getDate();
